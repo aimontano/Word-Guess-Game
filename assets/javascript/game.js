@@ -60,18 +60,18 @@ const getRandomWord = (arr) => {
 	return arr[ranNum];
 };
 
+
 randomWord = getRandomWord(dictionary); // gets random word each time function is called
 
-for(let i = 0; i < randomWord.length; i++) {
-	letterArray.push('_');
-	letters += letterArray[i] + " ";
-}
 
-// sets current word on document
-currentWord.textContent = letters;
-
-console.log(randomWord);
-console.log(letters);
+const displayWord = () =>{
+	for(let i = 0; i < randomWord.length; i++) {
+		letterArray.push('_');
+		letters += letterArray[i] + " ";
+	}
+	// sets current word on document
+	currentWord.textContent = letters;
+};
 
 // guess function takes a single letter string
 const guess = (letter) => {
@@ -137,6 +137,16 @@ const hasWon = (array1, array2) => {
 
 
 const update = () => {
+
+	if(hasWon(randomWord, letterArray)){
+		winCounter += 1;
+		guessRemaining = 11;
+		randomWord = getRandomWord(dictionary);
+		letters = '';
+		letterArray = [];
+		displayWord();
+	}
+
 	// sets wins on document
 	wins.textContent = winCounter;
 	// sets number of guesses remaining on document
@@ -151,6 +161,8 @@ const update = () => {
 	currentWord.textContent = letters;
 };
 
+
+displayWord();
 update();
 
 // if user presses any key
