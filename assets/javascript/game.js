@@ -1,34 +1,7 @@
-/*
-
-Use key events to listen for the letters that your players will type.
-
-Display the following on the page:
-
-Press any key to get started!
-
-Wins: (# of times user guessed the word correctly).
-
-   * If the word is `madonna`, display it like this when the game starts: `_ _ _ _ _ _ _`.
-
-   * As the user guesses the correct letters, reveal them: `m a d o _  _ a`.
-
-Number of Guesses Remaining: (# of guesses remaining for the user).
-
-Letters Already Guessed: (Letters the user has guessed, displayed like `L Z Y H`).
-
-After the user wins/loses the game should automatically choose another word and make the user play it.
-
-##### Word Guess Game Bonuses
-
-1. Play a sound or song when the user guesses their word correctly, like in our demo.
-2. Write some stylish CSS rules to make a design that fits your game's theme.
-3. **HARD MODE:** Organize your game code as an object, except for the key events to get the letter guessed. This will be a challenge if you haven't coded with JavaScript before, but we encourage anyone already familiar with the language to try this out.
-*/
-
-
 const currentWord = document.querySelector('#currentWord');
 const wins = document.querySelector('#wins');
 const guessRemEl = document.querySelector('#guessRemaining');
+const alreayGuessed = document.querySelector('#alreayGuessed');
 
 let winCounter = 0; // stores how many times user wins
 let guessRemaining = 11; // stores guess remaining counter
@@ -48,11 +21,6 @@ let dictionary = [
 	'boolean'
 ];
 
-// sets wins on document
-wins.textContent = winCounter;
-// sets number of guesses remaining on document
-guessRemEl.textContent = guessRemaining;
-
 // Function takes an array (in this case dictionary array)
 // returns a random value from array
 const getRandomWord = (arr) => {
@@ -60,9 +28,7 @@ const getRandomWord = (arr) => {
 	return arr[ranNum];
 };
 
-
 randomWord = getRandomWord(dictionary); // gets random word each time function is called
-
 
 const displayWord = () =>{
 	for(let i = 0; i < randomWord.length; i++) {
@@ -135,17 +101,43 @@ const hasWon = (array1, array2) => {
 	return true;
 };
 
+// function checks if user has lost
+const hasLost = () => {
+	// if user has guessed wrong 11 times
+	if (guessRemaining <= 0) 
+		return true; // user has lost; return true
+	return false; // otherwise user keeps playing
+};
 
+// function resets statuses & gets new word
+const reset = () => {
+	guessRemaining = 11;
+	randomWord = getRandomWord(dictionary);
+	letters = '';
+	letterArray = [];
+	guessedLetters = [];
+	displayWord();	
+};
+
+// function updates game
 const update = () => {
-
+	let guessedLetterString = '';
+	// if user has won
 	if(hasWon(randomWord, letterArray)){
-		winCounter += 1;
-		guessRemaining = 11;
-		randomWord = getRandomWord(dictionary);
-		letters = '';
-		letterArray = [];
-		displayWord();
+		winCounter++; // increase number of wins
+		reset(); // reset screen
 	}
+
+	// if user has lost
+	if(hasLost()){
+		winCounter--; // decrease number of wins
+		reset(); // reset screen
+	}
+
+	for(let item in guessedLetters)
+		guessedLetterString += guessedLetters[item] + ", " ;
+
+	alreayGuessed.textContent =  guessedLetterString ;
 
 	// sets wins on document
 	wins.textContent = winCounter;
@@ -153,17 +145,14 @@ const update = () => {
 	guessRemEl.textContent = guessRemaining;
 	
 	letters = '';
-	for(let item in letterArray) {
+	for(let item in letterArray) 
 		letters += letterArray[item] + " ";
-	}
 
 	// sets current word on document
 	currentWord.textContent = letters;
 };
 
-
 displayWord();
-update();
 
 // if user presses any key
 document.onkeyup = (e) => {
@@ -186,8 +175,6 @@ document.onkeyup = (e) => {
 			guessRemaining--;
 			update();
 		}
-
 	}
-
 };
 
